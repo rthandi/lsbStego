@@ -10,10 +10,10 @@ img = cv.imread('stegoImg/parrot.png', 0)
 lsbQueue = queue.Queue()
 
 # Get the least significant bits of the image
-for x in img:
-    for y in x:
-        yByte = format(y, '08b')
-        lsbQueue.put(yByte[-1])
+for i in range(len(img)):
+    for j in range(len(img[0])):
+        jByte = format(j, '08b')
+        lsbQueue.put(jByte[-1])
 
 # get length of message
 # Instantiate queues
@@ -37,7 +37,6 @@ for i in range(16):
 
 while not compareQueue(past16, comparisonQueue):
     nextVal = lsbQueue.get()
-    print (nextVal)
     lengthStack.put(nextVal)
     past16.get()
     past16.put(nextVal)
