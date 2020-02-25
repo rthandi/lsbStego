@@ -28,28 +28,39 @@ print("here1")
 for i in range(16):
     nextVal = lsbQueue.get()
     if flag:
-        comparisonQueue.put(0)
+        comparisonQueue.put('0')
     else:
-        comparisonQueue.put(1)
+        comparisonQueue.put('1')
+    print(nextVal)
     past16.put(nextVal)
     lengthStack.put(nextVal)
     flag = not flag
 
+print("here1.5")
+
 while not compareQueue(past16, comparisonQueue):
+    # print(compareQueue(past16, comparisonQueue))
     nextVal = lsbQueue.get()
     lengthStack.put(nextVal)
     past16.get()
     past16.put(nextVal)
 
 print("here2")
+# Size of stack is 16 here for some reason
 for i in range(16):
     lengthStack.get()
 print("here3")
 
-length = None
+print(lengthStack.qsize())
+
+length = ''
 
 while not lengthStack.empty():
-    length.append(lengthStack.get())
+    # length += lengthStack.get()
+    print(lengthStack.get())
+    print(lengthStack.empty())
+
+print(length)
 
 #reverse string
 length = length[::-1]
