@@ -12,7 +12,7 @@ lsbQueue = queue.Queue()
 # Get the least significant bits of the image
 for i in range(len(img)):
     for j in range(len(img[0])):
-        jByte = format(j, '08b')
+        jByte = format(img[i][j], '08b')
         lsbQueue.put(jByte[-1])
 
 # get length of message
@@ -31,16 +31,17 @@ for i in range(16):
         comparisonQueue.put('0')
     else:
         comparisonQueue.put('1')
-    print(nextVal)
     past16.put(nextVal)
     lengthStack.put(nextVal)
+    print(nextVal)
     flag = not flag
 
 print("here1.5")
 
 while not compareQueue(past16, comparisonQueue):
-    # print(compareQueue(past16, comparisonQueue))
+    # print(compareQueue(past16, comparisonQueue))#
     nextVal = lsbQueue.get()
+    print(nextVal)
     lengthStack.put(nextVal)
     past16.get()
     past16.put(nextVal)
@@ -48,7 +49,7 @@ while not compareQueue(past16, comparisonQueue):
 print("here2")
 # Size of stack is 16 here for some reason
 for i in range(16):
-    lengthStack.get()
+    print(lengthStack.get())
 print("here3")
 
 print(lengthStack.qsize())
@@ -56,9 +57,7 @@ print(lengthStack.qsize())
 length = ''
 
 while not lengthStack.empty():
-    # length += lengthStack.get()
-    print(lengthStack.get())
-    print(lengthStack.empty())
+    length += lengthStack.get()
 
 print(length)
 

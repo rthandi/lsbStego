@@ -15,12 +15,16 @@ for i in message:
 endOfLengthIndicator = '0101010101010101'
 
 binMessageQueue = queue.Queue()
+print("length =    " + str(len(binMessage)))
 length = format(len(binMessage), '08b')
+print(length)
 
 for i in length:
+    print(i)
     binMessageQueue.put(i)
 
 for i in endOfLengthIndicator:
+    print(i)
     binMessageQueue.put(i)
 
 for i in binMessage:
@@ -31,10 +35,10 @@ for i in range(len(img)):
     for j in range(len(img[0])):
         if not binMessageQueue.empty():
             # print("before" + str(img[i][j]))
-            byte = format(img[i][j], 'b')
+            byte = format(img[i][j], '08b')
             # print(byte)
             # print("binMessageQueue" + str(binMessageQueue.get()))
-            updatedLastBit = int(byte[-1]) | int(binMessageQueue.get())
+            updatedLastBit = int(binMessageQueue.get())
             # print(updatedLastBit)
             img[i][j] = int(byte[0:-1] + str(updatedLastBit), 2)
             # print("after" + str(img[i][j]))
