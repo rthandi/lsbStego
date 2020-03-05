@@ -1,11 +1,13 @@
 import cv2 as cv
 import queue
 
-
 def compare_queue(queue1, queue2):
     return queue1.queue == queue2.queue
 
-img = cv.imread('stegoImg/parrot.png', 0)
+chosenImg = "xray.jpeg"
+embedRate = 2
+
+img = cv.imread("stegoImg/" + chosenImg, 0)
 
 lsbQueue = queue.Queue()
 
@@ -13,7 +15,8 @@ lsbQueue = queue.Queue()
 for i in range(len(img)):
     for j in range(len(img[0])):
         jByte = format(img[i][j], '08b')
-        lsbQueue.put(jByte[-1])
+        for k in range(embedRate + 1):
+            lsbQueue.put(jByte[-k])
 
 # get length of message
 # Instantiate queues
@@ -34,6 +37,8 @@ for i in range(16):
     lengthStack.put(nextVal)
     flag = not flag
 
+print("here")
+
 # we do a check here for every byte only as this minimises errors in reading lengths when part of the indicator is in
 # the binary string for the length eg. length is 110110101 - the 0101 would trigger the logic of checking the length of
 # the indicator and cause incorrect lengths to be read. Now this only happens if the length is 01010101 which is
@@ -42,9 +47,11 @@ while not compare_queue(past16, comparisonQueue):
     # read a byte
     for i in range(8):
         nextVal = lsbQueue.get()
+        print(nextVal)
         lengthStack.put(nextVal)
         past16.get()
         past16.put(nextVal)
+print("here again")
 
 # removes the indicator from the length stack
 for i in range(16):
@@ -61,6 +68,8 @@ lengthInt = int(length, 2)
 
 tempArray = []
 
+print(lengthInt)
+
 # extract all of the bytes individually
 while lengthInt > 0:
     stringBuilder = ''
@@ -68,6 +77,8 @@ while lengthInt > 0:
         stringBuilder += lsbQueue.get()
     tempArray.append(stringBuilder)
     lengthInt -= 1
+
+print("ehreherhehrehreh")
 
 outputString = ''
 

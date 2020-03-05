@@ -1,11 +1,13 @@
-import numpy as np
 import cv2 as cv
 import queue
 
-img = cv.imread('img/parrot.png', 0)
+chosenImg = "xray.jpeg"
 
-# message = input("Type in the message that you would like to be hidden")
-message = "Squirrels"
+img = cv.imread("img/" + chosenImg, 0)
+
+# type the message that you would like to be hidden
+message = "SquirrelsSquirrelsSquirrelsSquirrels"
+embedRate = 2
 
 binMessage = []
 
@@ -33,12 +35,14 @@ for i in binMessage:
 
 for i in range(len(img)):
     for j in range(len(img[0])):
+        updatedLastBits = ''
         if not binMessageQueue.empty():
             byte = format(img[i][j], '08b')
-            updatedLastBit = int(binMessageQueue.get())
-            img[i][j] = int(byte[0:-1] + str(updatedLastBit), 2)
+            for k in range(embedRate):
+                updatedLastBits += binMessageQueue.get()
+            img[i][j] = int(byte[-embedRate] + updatedLastBits, 2)
 
-if cv.imwrite('stegoImg/parrot.png', img):
+if cv.imwrite("stegoImg/" + chosenImg, img):
     cv.imshow('stegoImage', img)
     cv.waitKey(0)
     cv.destroyAllWindows()
