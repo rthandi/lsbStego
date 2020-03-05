@@ -1,6 +1,7 @@
 import numpy as np
 import cv2 as cv
 import queue
+import binascii
 
 def compareQueue(queue1, queue2):
     return queue1.queue == queue2.queue
@@ -38,16 +39,28 @@ for i in range(16):
 
 print("here1.5")
 
+# we do a check here for every byte only as this minimises errors in reading lengths when part of the indicator is in
+# the binary string for the length eg. length is 110110101 - the 0101 would trigger the logic of checking the length of
+# the indicator and cause incorrect lengths to be read. Now this only happens if the length is 01010101 which is
+# unlikely and can have its own specific logic if needed
 while not compareQueue(past16, comparisonQueue):
-    # print(compareQueue(past16, comparisonQueue))#
-    nextVal = lsbQueue.get()
-    print(nextVal)
-    lengthStack.put(nextVal)
-    past16.get()
-    past16.put(nextVal)
+    # read a byte
+    for i in range(8):
+        nextVal = lsbQueue.get()
+        lengthStack.put(nextVal)
+        past16.get()
+        past16.put(nextVal)
+#
+# while not compareQueue(past16, comparisonQueue):
+#     # print(compareQueue(past16, comparisonQueue))#
+#     nextVal = lsbQueue.get()
+#     print(nextVal)
+#     lengthStack.put(nextVal)
+#     past16.get()
+#     past16.put(nextVal)
 
 print("here2")
-# Size of stack is 16 here for some reason
+# removes the indicator from the length stack
 for i in range(16):
     print(lengthStack.get())
 print("here3")
@@ -65,5 +78,28 @@ print(length)
 length = length[::-1]
 lengthInt = int(length, 2)
 print(lengthInt)
+
+length = int(length)
+stringBuilder = ''
+
+# while length > 0:
+#     byteBuffer = ''
+#     for i in range(8):
+#         length -= 1
+#         byteBuffer += lsbQueue.get()
+#     stringBuilder += binascii.b2a_qp(byteBuffer)
+
+for i in range(length):
+    stringBuilder += lsbQueue.get()
+
+binary_int = int(stringBuilder, 2)
+byte_number = binary_int.bit_length() + 7 // 8
+
+binary_array = binary_int.to_bytes(byte_number, "big")
+ascii_text = binary_array.decode()
+
+print(ascii_text)
+
+print(stringBuilder)
 
 # while compareQueue(pas)

@@ -9,22 +9,26 @@ message = "ktfa testasdasdasdasfasf;kmflksdlkjfalksjgkjlsadglkjsdjgsdjkgsjdgjdsg
 
 binMessage = []
 
+temp = "f"
+print(format(ord(temp), '08b'))
+
 for i in message:
+    print(i)
     binMessage.append(format(ord(i), '08b'))
 
 endOfLengthIndicator = '0101010101010101'
 
 binMessageQueue = queue.Queue()
-print("length =    " + str(len(binMessage)))
 length = format(len(binMessage), '08b')
-print(length)
+
+# make sure it is a multiple of an 8 bit number as this minimises errors from having part of the indicator in the length
+while len(length) % 8 != 0:
+    length = '0' + length
 
 for i in length:
-    print(i)
     binMessageQueue.put(i)
 
 for i in endOfLengthIndicator:
-    print(i)
     binMessageQueue.put(i)
 
 for i in binMessage:
@@ -34,14 +38,9 @@ for i in binMessage:
 for i in range(len(img)):
     for j in range(len(img[0])):
         if not binMessageQueue.empty():
-            # print("before" + str(img[i][j]))
             byte = format(img[i][j], '08b')
-            # print(byte)
-            # print("binMessageQueue" + str(binMessageQueue.get()))
             updatedLastBit = int(binMessageQueue.get())
-            # print(updatedLastBit)
             img[i][j] = int(byte[0:-1] + str(updatedLastBit), 2)
-            # print("after" + str(img[i][j]))
 
 if cv.imwrite('stegoImg/parrot.png', img):
     cv.imshow('stegoImage', img)
