@@ -1,13 +1,13 @@
 import cv2 as cv
 import queue
 
-chosenImg = "xray.jpeg"
+chosenImg = "parrot.png"
 
 img = cv.imread("img/" + chosenImg, 0)
 
 # type the message that you would like to be hidden
 message = "SquirrelsSquirrelsSquirrelsSquirrels"
-embedRate = 2
+embedRate = 3
 
 binMessage = []
 
@@ -40,7 +40,7 @@ for i in range(len(img)):
             byte = format(img[i][j], '08b')
             for k in range(embedRate):
                 updatedLastBits += binMessageQueue.get()
-            img[i][j] = int(byte[-embedRate] + updatedLastBits, 2)
+            img[i][j] = int(byte[:-embedRate] + updatedLastBits, 2)
 
 if cv.imwrite("stegoImg/" + chosenImg, img):
     cv.imshow('stegoImage', img)
