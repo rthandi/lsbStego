@@ -1,11 +1,13 @@
 import cv2 as cv
 import queue
 
-
 def compare_queue(queue1, queue2):
     return queue1.queue == queue2.queue
 
-img = cv.imread('stegoImg/parrot.png', 0)
+chosenImg = "parrot.png"
+embedRate = 3
+
+img = cv.imread("stegoImg/" + chosenImg, 0)
 
 lsbQueue = queue.Queue()
 
@@ -13,7 +15,8 @@ lsbQueue = queue.Queue()
 for i in range(len(img)):
     for j in range(len(img[0])):
         jByte = format(img[i][j], '08b')
-        lsbQueue.put(jByte[-1])
+        for k in reversed(range(embedRate)):
+            lsbQueue.put(jByte[-(k+1)])
 
 # get length of message
 # Instantiate queues
@@ -76,5 +79,3 @@ for i in tempArray:
     n = int('0b' + i, 2)
     n.to_bytes((n.bit_length() + 7) // 8, 'big').decode()
     outputString += str(chr(n))
-
-print(outputString)
