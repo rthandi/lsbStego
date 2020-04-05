@@ -1,22 +1,36 @@
 import cv2 as cv
 import queue
+import stegoFunctions
+import copy
 
-def compare_queue(queue1, queue2):
-    return queue1.queue == queue2.queue
-
-chosenImg = "parrot.png"
-embedRate = 3
+chosenImg = "xray.jpeg"
+embedRate = 2
 
 img = cv.imread("stegoImg/" + chosenImg, 0)
+maskedImg = copy.deepcopy(img)
+
+bitMask = stegoFunctions.bin_mask_generator(embedRate)
+
+# mask the image to the correct embed rate
+for i in range(len(img)):
+    for j in range(len(img[0])):
+        maskedImg[i][j] = (img[i][j] & bitMask)
+
+# calculate the edge pixels
+edges = cv.Canny(maskedImg, 40, 120)
+cv.imshow('stegoImage', edges)
+cv.waitKey(0)
+
 
 lsbQueue = queue.Queue()
 
 # Get the least significant bits of the image
 for i in range(len(img)):
     for j in range(len(img[0])):
-        jByte = format(img[i][j], '08b')
-        for k in reversed(range(embedRate)):
-            lsbQueue.put(jByte[-(k+1)])
+        if edges[i][j] == 255:
+            jByte = format(img[i][j], '08b')
+            for k in reversed(range(embedRate)):
+                lsbQueue.put(jByte[-(k+1)])
 
 # get length of message
 # Instantiate queues
@@ -41,7 +55,7 @@ for i in range(16):
 # the binary string for the length eg. length is 110110101 - the 0101 would trigger the logic of checking the length of
 # the indicator and cause incorrect lengths to be read. Now this only happens if the length is 01010101 which is
 # unlikely and can have its own specific logic if needed
-while not compare_queue(past16, comparisonQueue):
+while not stegoFunctions.compare_queue(past16, comparisonQueue):
     # read a byte
     for i in range(8):
         nextVal = lsbQueue.get()

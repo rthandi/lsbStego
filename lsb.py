@@ -1,40 +1,18 @@
 import cv2 as cv
 import queue
-
-def binMaskGenerator(number):
-    if number == 1:
-        # return "11111110"
-        return 254
-    elif number == 2:
-        # return "11111100"
-        return 252
-    elif number == 3:
-        # return "11111000"
-        return 248
-    elif number == 4:
-        # return "11110000"
-        return 240
-    elif number == 5:
-        # return "11100000"
-        return 224
-    elif number == 6:
-        # return "11000000"
-        return 192
-    else:
-        return 128
-        # return "10000000"
+import copy
+import stegoFunctions
 
 chosenImg = "xray.jpeg"
 
 img = cv.imread("img/" + chosenImg, 0)
+maskedImg = copy.deepcopy(img)
 
 # type the message that you would like to be hidden
 message = "SquirrelsSquirrelsSquirrelsSquirrels"
-embedRate = 1
+embedRate = 2
 
-bitMask = binMaskGenerator(embedRate)
-
-maskedImg = [[0 for i in range(len(img))] for j in range(len(img[0]))]
+bitMask = stegoFunctions.bin_mask_generator(embedRate)
 
 # mask the image to the correct embed rate
 for i in range(len(img)):
@@ -43,8 +21,6 @@ for i in range(len(img)):
 
 # calculate the edge pixels
 edges = cv.Canny(maskedImg, 40, 120)
-cv.imshow('stegoImage', edges)
-cv.waitKey(0)
 
 binMessage = []
 
