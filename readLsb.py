@@ -15,6 +15,7 @@ bitMask = stegoFunctions.bin_mask_generator(embedRate)
 for i in range(len(img)):
     for j in range(len(img[0])):
         maskedImg[i][j] = (img[i][j] & bitMask)
+        print(format(maskedImg[i][j], '08b'))
 
 # calculate the edge pixels
 edges = cv.Canny(maskedImg, 40, 120)
@@ -58,10 +59,13 @@ for i in range(16):
 while not stegoFunctions.compare_queue(past16, comparisonQueue):
     # read a byte
     for i in range(8):
+        print("here")
         nextVal = lsbQueue.get()
         lengthStack.put(nextVal)
         past16.get()
         past16.put(nextVal)
+
+print("here again")
 
 # removes the indicator from the length stack
 for i in range(16):
