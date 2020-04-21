@@ -10,7 +10,6 @@ thresholdRatio = 3
 
 img = cv.imread("img/" + chosenImg, 0)
 maskedImg = copy.deepcopy(img)
-maskedImg2 = copy.deepcopy(img)
 
 # type the message that you would like to be hidden
 message = "SquirrelsSquirrelsSquirrelsSquirrels"
@@ -63,11 +62,6 @@ for i in range(len(img)):
                 for k in range(embedRate):
                     updatedLastBits += binMessageQueue.get()
                 img[i][j] = int(byte[:-embedRate] + updatedLastBits, 2)
-
-for i in range(len(img)):
-    for j in range(len(img[0])):
-        maskedImg2[i][j] = (img[i][j] & bitMask)
-
 
 if cv.imwrite("stegoImg/" + chosenImg, img):
     cv.imshow('stegoImage', img)
