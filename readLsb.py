@@ -4,14 +4,17 @@ import stegoFunctions
 import copy
 
 chosenImg = "xray.png"
-embedRate = 2
-lowThreshold = 40
+strongEmbedRate = 4
+weakEmbedRate = 2
+backgroundEmbedRate = 1
+weakEdgeThreshold = 35
+strongEdgeThreshold = 50
 thresholdRatio = 3
 
 img = cv.imread("stegoImg/" + chosenImg, 0)
 maskedImg = copy.deepcopy(img)
 
-bitMask = stegoFunctions.bin_mask_generator(embedRate)
+bitMask = stegoFunctions.bin_mask_generator(strongEmbedRate)
 
 # mask the image to the correct embed rate
 for i in range(len(img)):
@@ -19,18 +22,23 @@ for i in range(len(img)):
         maskedImg[i][j] = (img[i][j] & bitMask)
 
 # calculate the edge pixels
-edges = cv.Canny(maskedImg, lowThreshold, lowThreshold * thresholdRatio)
-cv.imshow('stegoImage', edges)
-cv.waitKey(0)
+weakEdges = cv.Canny(maskedImg, weakEdgeThreshold, weakEdgeThreshold * thresholdRatio)
+strongEdges = cv.Canny(maskedImg, strongEdgeThreshold, strongEdgeThreshold * thresholdRatio)
 
 lsbQueue = queue.Queue()
 
 # Get the least significant bits of the image
 for i in range(len(img)):
     for j in range(len(img[0])):
-        if edges[i][j] == 255:
-            jByte = format(img[i][j], '08b')
-            for k in reversed(range(embedRate)):
+        jByte = format(img[i][j], '08b')
+        if strongEdges[i][j] == 255:
+            for k in reversed(range(strongEmbedRate)):
+                lsbQueue.put(jByte[-(k+1)])
+        elif weakEdges[i][j] == 255:
+            for k in reversed(range(weakEmbedRate)):
+                lsbQueue.put(jByte[-(k+1)])
+        else:
+            for k in reversed(range(backgroundEmbedRate)):
                 lsbQueue.put(jByte[-(k+1)])
 
 # get length of message
