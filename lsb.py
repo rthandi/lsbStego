@@ -5,6 +5,8 @@ import stegoFunctions
 
 chosenImg = "xray.png"
 embedRate = 2
+lowThreshold = 40
+thresholdRatio = 3
 
 img = cv.imread("img/" + chosenImg, 0)
 maskedImg = copy.deepcopy(img)
@@ -21,7 +23,7 @@ for i in range(len(img)):
         maskedImg[i][j] = (img[i][j] & bitMask)
 
 # calculate the edge pixels
-edges = cv.Canny(maskedImg, 40, 120)
+edges = cv.Canny(maskedImg, lowThreshold, lowThreshold * thresholdRatio)
 
 cv.imshow('edges', edges)
 cv.waitKey(0)
