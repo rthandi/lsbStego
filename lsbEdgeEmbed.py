@@ -1,17 +1,7 @@
-import cv2 as cv
-import queue
-import copy
-import stegoFunctions
-
-def lsb_edge(chosenImg, embedRate, message, lowThreshold, cv, queue, copy, stegoFunctions):
-
-    thresholdRatio = 3
-
-    img = cv.imread("img/" + chosenImg, 0)
+import numpy as np
+def lsbEdge(chosenImg, embedRate, message, lowThreshold, thresholdRatio, cv, queue, copy, stegoFunctions):
+    img = cv.imread("imageSet/" + chosenImg, 0)
     maskedImg = copy.deepcopy(img)
-
-    # type the message that you would like to be hidden
-    message = "SquirrelsSquirrelsSquirrelsSquirrels"
 
     bitMask = stegoFunctions.bin_mask_generator(embedRate)
 
@@ -52,11 +42,11 @@ def lsb_edge(chosenImg, embedRate, message, lowThreshold, cv, queue, copy, stego
             # if it is an edge pixel
             if edges[i][j] == 255:
                 updatedLastBits = ''
-                if not binMessageQueue.empty():
-                    byte = format(img[i][j], '08b')
-                    for k in range(embedRate):
+                byte = format(img[i][j], '08b')
+                for k in range(embedRate):
+                    if not binMessageQueue.empty():
                         updatedLastBits += binMessageQueue.get()
-                    img[i][j] = int(byte[:-embedRate] + updatedLastBits, 2)
+                img[i][j] = int(byte[:-embedRate] + updatedLastBits, 2)
 
     if cv.imwrite("lsbEdge/" + chosenImg, img):
         return True

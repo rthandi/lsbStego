@@ -71,4 +71,4 @@ def readLsbBasic(chosenImg, embedRate, cv, queue, stegoFunctions):
         n.to_bytes((n.bit_length() + 7) // 8, 'big').decode()
         outputString += str(chr(n))
 
-    return chosenImg
+    return outputString

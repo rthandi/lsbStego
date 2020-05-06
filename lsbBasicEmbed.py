@@ -1,5 +1,5 @@
-def lsb_basic(chosenImg, embedRate, message, cv, queue):
-    img = cv.imread("img/" + chosenImg, 0)
+def lsbBasic(chosenImg, embedRate, message, cv, queue):
+    img = cv.imread("imageSet/" + chosenImg, 0)
 
     binMessage = []
 
@@ -28,11 +28,11 @@ def lsb_basic(chosenImg, embedRate, message, cv, queue):
     for i in range(len(img)):
         for j in range(len(img[0])):
             updatedLastBits = ''
-            if not binMessageQueue.empty():
-                byte = format(img[i][j], '08b')
-                for k in range(embedRate):
+            byte = format(img[i][j], '08b')
+            for k in range(embedRate):
+                if not binMessageQueue.empty():
                     updatedLastBits += binMessageQueue.get()
-                img[i][j] = int(byte[:-embedRate] + updatedLastBits, 2)
+            img[i][j] = int(byte[:-embedRate] + updatedLastBits, 2)
 
     if cv.imwrite("lsbBasic/" + chosenImg, img):
         return True

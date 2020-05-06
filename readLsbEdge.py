@@ -1,6 +1,5 @@
-
-def readLsbEdge(chosenImg, embedRate, lowThreshold, cv, queue, copy, stegoFunctions):
-    thresholdRatio = 3
+import numpy as np
+def readLsbEdge(chosenImg, embedRate, lowThreshold, thresholdRatio, cv, queue, copy, stegoFunctions):
 
     img = cv.imread("lsbEdge/" + chosenImg, 0)
     maskedImg = copy.deepcopy(img)
@@ -14,8 +13,8 @@ def readLsbEdge(chosenImg, embedRate, lowThreshold, cv, queue, copy, stegoFuncti
 
     # calculate the edge pixels
     edges = cv.Canny(maskedImg, lowThreshold, lowThreshold * thresholdRatio)
-    cv.imshow('stegoImage', edges)
-    cv.waitKey(0)
+
+    print(np.count_nonzero(edges == 255))
 
     lsbQueue = queue.Queue()
 
@@ -77,15 +76,20 @@ def readLsbEdge(chosenImg, embedRate, lowThreshold, cv, queue, copy, stegoFuncti
     while lengthInt > 0:
         stringBuilder = ''
         for i in range(8):
+            # print(i)
             stringBuilder += lsbQueue.get()
         tempArray.append(stringBuilder)
         lengthInt -= 1
 
     outputString = ''
 
+    counter = 0
     # Convert each byte to its ascii value
     for i in tempArray:
         n = int('0b' + i, 2)
+        # print(str(i))
+        counter += 1
+        print(counter)
         n.to_bytes((n.bit_length() + 7) // 8, 'big').decode()
         outputString += str(chr(n))
 

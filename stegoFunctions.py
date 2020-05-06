@@ -24,3 +24,21 @@ def bin_mask_generator(number):
 
 def compare_queue(queue1, queue2):
     return queue1.queue == queue2.queue
+
+def performance(fileName, resultDirectory, np, math, cv):
+    originalImg = cv.imread("imageSet/" + fileName, 0)
+    alteredImg = cv.imread(resultDirectory + fileName, 0)
+
+
+    # Compute mean squared error with: https://www.pyimagesearch.com/2014/09/15/python-compare-two-images/
+    mse = np.sum((originalImg.astype("float") - alteredImg.astype("float")) ** 2)
+    mse /= float(originalImg.shape[0] * originalImg.shape[1])
+
+    # Compute peak signal to noise ratio with:
+    PIXEL_MAX = 255.0
+    if mse == 0:
+        psnr = 100
+    else:
+        psnr = 20 * math.log10(PIXEL_MAX / math.sqrt(mse))
+
+    return mse, psnr

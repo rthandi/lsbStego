@@ -1,5 +1,5 @@
 def readLsbExtended(chosenImg, backgroundEmbedRate, weakEmbedRate, strongEmbedRate, weakEdgeThreshold, strongEdgeThreshold, thresholdRatio, cv, queue, copy, stegoFunctions):
-    img = cv.imread("lsbExtended/" + chosenImg, 0)
+    img = cv.imread("lsbEdgeExtended/" + chosenImg, 0)
     maskedImg = copy.deepcopy(img)
 
     bitMask = stegoFunctions.bin_mask_generator(strongEmbedRate)
